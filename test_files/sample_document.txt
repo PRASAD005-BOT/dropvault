@@ -1,0 +1,5 @@
+Hello from DropVault!
+
+This is a test file to demonstrate uploading and downloading any file type.
+DropVault works seamlessly with documents, images, videos, audio, zip files, code, and more.
+Enjoy your fast and simple file sharing experience!

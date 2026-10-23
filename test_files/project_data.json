@@ -1,0 +1,13 @@
+{
+  "app": "DropVault",
+  "version": "1.0.0",
+  "purpose": "Universal file upload and download service",
+  "features": [
+    "Any file type supported",
+    "Real-time upload progress",
+    "Mobile QR code scanner",
+    "Direct download",
+    "Deployable to Render"
+  ],
+  "author": "Antigravity"
+}

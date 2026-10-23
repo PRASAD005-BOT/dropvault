@@ -1,0 +1,28 @@
+{
+  "name": "dropvault-file-uploader",
+  "version": "1.0.0",
+  "description": "Simple and modern file upload & download web application deployable on Render",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "file-upload",
+    "file-download",
+    "render",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "1792759713627-50698848": {
+    "id": "1792759713627-50698848",
+    "storedName": "1792759713627-50698848.exe",
+    "originalName": "Setup_DemoApp.exe",
+    "size": 55,
+    "formattedSize": "55 Bytes",
+    "mimetype": "application/octet-stream",
+    "uploadedAt": "2026-10-23T12:48:33.642Z"
+  },
+  "1792759872428-808109586": {
+    "id": "1792759872428-808109586",
+    "storedName": "1792759872428-808109586.txt",
+    "originalName": "sample_document.txt",
+    "size": 244,
+    "formattedSize": "244 Bytes",
+    "mimetype": "text/plain",
+    "uploadedAt": "2026-10-23T12:51:12.452Z"
+  },
+  "1792759872447-375467495": {
+    "id": "1792759872447-375467495",
+    "storedName": "1792759872447-375467495.json",
+    "originalName": "project_data.json",
+    "size": 298,
+    "formattedSize": "298 Bytes",
+    "mimetype": "application/octet-stream",
+    "uploadedAt": "2026-10-23T12:51:12.452Z"
+  }
+}

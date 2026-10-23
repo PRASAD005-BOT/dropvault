@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropVault — Fast & Simple Any-File Upload & Download</title>
+  <meta name="description" content="Upload any type of file and download instantly with a simple, modern interface. Ready for Render deployment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-box">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>DropVault</h1>
+          <span class="logo-tagline">Upload & Download Any File</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="status-badge" id="serverStatusBadge">
+          <span class="status-dot"></span>
+          <span id="serverStatusText">Connecting...</span>
+        </div>
+        <div class="stats-pills">
+          <div class="stat-pill">
+            <span class="stat-label">Files</span>
+            <span class="stat-value" id="statFileCount">0</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Storage</span>
+            <span class="stat-value" id="statStorageSize">0 B</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Upload Section -->
+      <section class="upload-section">
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" multiple style="display: none;">
+          
+          <div class="dropzone-content">
+            <div class="cloud-icon-wrapper">
+              <svg class="cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                <path d="M12 12v9"/>
+                <path d="m16 16-4-4-4 4"/>
+              </svg>
+            </div>
+            <h2 class="dropzone-title">Drag & drop your files here</h2>
+            <p class="dropzone-subtitle">or <button type="button" class="browse-btn" id="browseBtn">browse files</button> from your device</p>
+            <div class="file-support-hint">
+              <span class="support-pill">Any file format</span>
+              <span class="bullet">•</span>
+              <span class="support-pill">.EXE, .MSI, ZIP, Images, Videos, PDFs, Docs</span>
+              <span class="bullet">•</span>
+              <span class="support-pill">Up to 250MB</span>
+            </div>
+          </div>
+
+          <!-- Upload Progress Overlay -->
+          <div class="upload-progress-container" id="uploadProgressContainer" style="display: none;">
+            <div class="progress-details">
+              <div class="progress-info">
+                <span class="uploading-filename" id="uploadProgressName">Uploading files...</span>
+                <span class="upload-percent" id="uploadProgressPercent">0%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage & Search Files Section -->
+      <section class="files-section">
+        <div class="files-header">
+          <div class="section-title-wrap">
+            <h3 class="section-title">Uploaded Files</h3>
+            <span class="files-count-badge" id="filesCountBadge">0 files</span>
+          </div>
+
+          <!-- Controls: Search, Filter, Sort -->
+          <div class="files-controls">
+            <!-- Search -->
+            <div class="search-box">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="searchInput" placeholder="Search file name..." autocomplete="off">
+              <button class="clear-search-btn" id="clearSearchBtn" style="display: none;" title="Clear search">✕</button>
+            </div>
+
+            <!-- Sort By -->
+            <div class="sort-box">
+              <select id="sortSelect" aria-label="Sort files">
+                <option value="newest">Sort: Newest First</option>
+                <option value="oldest">Sort: Oldest First</option>
+                <option value="name">Sort: Name (A-Z)</option>
+                <option value="size-desc">Sort: Size (Largest)</option>
+                <option value="size-asc">Sort: Size (Smallest)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="filter-chips">
+          <button class="chip active" data-category="all">All Files</button>
+          <button class="chip" data-category="executable">⚡ Programs (.exe)</button>
+          <button class="chip" data-category="image">🖼️ Images</button>
+          <button class="chip" data-category="document">📄 Documents</button>
+          <button class="chip" data-category="video">🎬 Videos</button>
+          <button class="chip" data-category="audio">🎵 Audio</button>
+          <button class="chip" data-category="archive">📦 Archives</button>
+          <button class="chip" data-category="other">📁 Other</button>
+        </div>
+
+        <!-- File List Grid -->
+        <div class="files-grid" id="filesGrid">
+          <!-- File cards injected dynamically by script.js -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+          <div class="empty-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <h4 id="emptyStateTitle">No files uploaded yet</h4>
+          <p id="emptyStateText">Drag and drop any file above or click Browse to upload your first file!</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p>Built with pure HTML, CSS, and JavaScript • Deployed effortlessly on <a href="https://render.com" target="_blank" rel="noopener">Render</a></p>
+        <div class="footer-links">
+          <span class="render-ready-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="pill-check">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Render Web Service Ready
+          </span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Preview Modal -->
+  <div class="modal-backdrop" id="previewModal" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-file-icon" id="previewModalIcon">📄</span>
+          <h3 class="modal-title" id="previewModalTitle">File Preview</h3>
+        </div>
+        <button class="modal-close-btn" id="closePreviewBtn" title="Close Preview">✕</button>
+      </div>
+      <div class="modal-body" id="previewModalBody">
+        <!-- Dynamic preview content -->
+      </div>
+      <div class="modal-footer">
+        <div class="modal-file-info" id="previewModalInfo">Size: -- • Type: --</div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="previewCopyLinkBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Link
+          </button>
+          <a href="#" class="btn btn-primary" id="previewDownloadBtn" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="modal-backdrop" id="qrModal" style="display: none;">
+    <div class="modal-container qr-modal-container">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-file-icon">📱</span>
+          <h3 class="modal-title">Scan to Download on Mobile</h3>
+        </div>
+        <button class="modal-close-btn" id="closeQrBtn" title="Close">✕</button>
+      </div>
+      <div class="modal-body qr-modal-body">
+        <div id="qrcodeWrapper" class="qrcode-wrapper">
+          <div id="qrcode"></div>
+        </div>
+        <p class="qr-filename" id="qrFileName">filename.ext</p>
+        <p class="qr-instruction">Scan this QR code with your phone camera or QR reader to download directly on your phone.</p>
+        <div class="qr-url-box">
+          <input type="text" id="qrUrlInput" readonly>
+          <button class="btn btn-secondary btn-sm" id="qrCopyUrlBtn">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Client-side QR Code Generator library for instant QR generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
