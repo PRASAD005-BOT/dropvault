@@ -234,6 +234,138 @@ body {
   gap: 36px;
 }
 
+/* --- Mode Switcher Tabs --- */
+.upload-mode-switcher {
+  display: flex;
+  gap: 12px;
+  margin-bottom: -16px;
+}
+
+.mode-tab {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.mode-tab:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mode-tab.active {
+  background: var(--accent-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+}
+
+.tab-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Paste & Share Text Card --- */
+.paste-card {
+  background: var(--bg-dropzone);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.25s ease;
+}
+
+.paste-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.paste-filename-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 260px;
+}
+
+.paste-filename-group input {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  width: 100%;
+  max-width: 320px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.paste-filename-group input:focus {
+  border-color: var(--border-focus);
+}
+
+.paste-quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.paste-textarea {
+  width: 100%;
+  min-height: 220px;
+  max-height: 500px;
+  resize: vertical;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 16px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.paste-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+.paste-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.paste-stats {
+  font-size: 0.84rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
 /* --- Dropzone / Upload Area --- */
 .dropzone {
   position: relative;

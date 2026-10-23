@@ -109,6 +109,52 @@ app.post('/api/upload', upload.array('files', 20), (req, res) => {
   }
 });
 
+// API: Upload Raw Text / Snippet directly
+app.post('/api/upload-text', (req, res) => {
+  try {
+    const { title, content } = req.body;
+    if (typeof content !== 'string' || content.trim() === '') {
+      return res.status(400).json({ error: 'Text content cannot be empty' });
+    }
+
+    let originalName = (title && title.trim()) ? title.trim() : `note-${new Date().toISOString().slice(0, 10)}.txt`;
+    if (!path.extname(originalName)) {
+      originalName += '.txt';
+    }
+
+    const ext = path.extname(originalName);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const storedName = uniqueSuffix + ext;
+    const filePath = path.join(UPLOADS_DIR, storedName);
+
+    fs.writeFileSync(filePath, content, 'utf-8');
+    const stat = fs.statSync(filePath);
+
+    const metadata = getMetadata();
+    const fileId = uniqueSuffix;
+    const record = {
+      id: fileId,
+      storedName: storedName,
+      originalName: originalName,
+      size: stat.size,
+      formattedSize: formatBytes(stat.size),
+      mimetype: 'text/plain',
+      uploadedAt: new Date().toISOString()
+    };
+
+    metadata[fileId] = record;
+    saveMetadata(metadata);
+
+    res.status(200).json({
+      message: `Text saved as "${originalName}"!`,
+      file: record
+    });
+  } catch (error) {
+    console.error('Text upload error:', error);
+    res.status(500).json({ error: 'Failed to save text: ' + error.message });
+  }
+});
+
 // API: Get all files list
 app.get('/api/files', (req, res) => {
   try {

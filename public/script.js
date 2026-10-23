@@ -31,6 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewModalInfo = document.getElementById('previewModalInfo');
   const previewDownloadBtn = document.getElementById('previewDownloadBtn');
   const previewCopyLinkBtn = document.getElementById('previewCopyLinkBtn');
+  const previewCopyContentBtn = document.getElementById('previewCopyContentBtn');
+
+  // Mode Tabs & Paste Card Elements
+  const tabUploadMode = document.getElementById('tabUploadMode');
+  const tabPasteMode = document.getElementById('tabPasteMode');
+  const pasteCard = document.getElementById('pasteCard');
+  const pasteFilenameInput = document.getElementById('pasteFilenameInput');
+  const pasteTextInput = document.getElementById('pasteTextInput');
+  const pasteStatsText = document.getElementById('pasteStatsText');
+  const btnClipboardPaste = document.getElementById('btnClipboardPaste');
+  const btnClearPaste = document.getElementById('btnClearPaste');
+  const btnSaveText = document.getElementById('btnSaveText');
 
   // QR Modal Elements
   const qrModal = document.getElementById('qrModal');
@@ -48,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let searchQuery = '';
   let currentSort = 'newest';
   let activePreviewFile = null;
+  let activePreviewTextContent = '';
 
   // --- Initialize App ---
   checkServerHealth();
@@ -105,6 +118,128 @@ document.addEventListener('DOMContentLoaded', () => {
   fileInput.addEventListener('change', () => {
     if (fileInput.files && fileInput.files.length > 0) {
       handleFilesUpload(fileInput.files);
+    }
+  });
+
+  // --- Mode Switching (Upload Files vs Paste Text) ---
+  tabUploadMode.addEventListener('click', () => {
+    tabUploadMode.classList.add('active');
+    tabPasteMode.classList.remove('active');
+    dropzone.style.display = 'block';
+    pasteCard.style.display = 'none';
+  });
+
+  tabPasteMode.addEventListener('click', () => {
+    tabPasteMode.classList.add('active');
+    tabUploadMode.classList.remove('active');
+    dropzone.style.display = 'none';
+    pasteCard.style.display = 'flex';
+    pasteTextInput.focus();
+  });
+
+  // Update text stats (chars & words)
+  function updatePasteStats() {
+    const text = pasteTextInput.value;
+    const chars = text.length;
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    pasteStatsText.textContent = `${chars} character${chars === 1 ? '' : 's'} • ${words} word${words === 1 ? '' : 's'}`;
+  }
+
+  pasteTextInput.addEventListener('input', updatePasteStats);
+
+  // Paste from Clipboard Button
+  btnClipboardPaste.addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) {
+        showToast('Clipboard is empty or contains no text', 'info');
+        return;
+      }
+      pasteTextInput.value = text;
+      updatePasteStats();
+      showToast('Pasted from clipboard!', 'success');
+      pasteTextInput.focus();
+    } catch (err) {
+      showToast('Clipboard permission denied. Please press Ctrl + V directly in the box.', 'error');
+    }
+  });
+
+  // Clear Paste Button
+  btnClearPaste.addEventListener('click', () => {
+    pasteFilenameInput.value = '';
+    pasteTextInput.value = '';
+    updatePasteStats();
+  });
+
+  // Save & Upload Text as File
+  btnSaveText.addEventListener('click', async () => {
+    const content = pasteTextInput.value;
+    const title = pasteFilenameInput.value.trim();
+
+    if (!content.trim()) {
+      showToast('Please type or paste some text first!', 'error');
+      pasteTextInput.focus();
+      return;
+    }
+
+    btnSaveText.disabled = true;
+    btnSaveText.innerHTML = 'Saving...';
+
+    try {
+      const res = await fetch('/api/upload-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || 'Text file created and uploaded!', 'success');
+        pasteTextInput.value = '';
+        pasteFilenameInput.value = '';
+        updatePasteStats();
+        loadFiles();
+        loadStats();
+      } else {
+        showToast(data.error || 'Failed to save text', 'error');
+      }
+    } catch (err) {
+      showToast('Network error while saving text', 'error');
+    } finally {
+      btnSaveText.disabled = false;
+      btnSaveText.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Save & Upload Text File
+      `;
+    }
+  });
+
+  // Global Paste Event (Ctrl + V anywhere on page)
+  window.addEventListener('paste', (e) => {
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+      return;
+    }
+
+    if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+      e.preventDefault();
+      handleFilesUpload(e.clipboardData.files);
+      showToast('Uploading pasted file from clipboard...', 'info');
+      return;
+    }
+
+    const pastedText = e.clipboardData ? e.clipboardData.getData('text') : '';
+    if (pastedText && pastedText.trim() !== '') {
+      e.preventDefault();
+      tabPasteMode.click();
+      pasteTextInput.value = pastedText;
+      updatePasteStats();
+      showToast('Text pasted from clipboard into editor!', 'info');
+      pasteTextInput.focus();
     }
   });
 
@@ -478,6 +613,9 @@ document.addEventListener('DOMContentLoaded', () => {
     previewModalBody.innerHTML = '<div style="color:var(--text-muted);">Loading preview...</div>';
     previewModal.style.display = 'flex';
 
+    activePreviewTextContent = '';
+    previewCopyContentBtn.style.display = 'none';
+
     if (category === 'image') {
       const img = document.createElement('img');
       img.src = viewUrl;
@@ -507,6 +645,8 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const textRes = await fetch(viewUrl);
         const text = await textRes.text();
+        activePreviewTextContent = text;
+        previewCopyContentBtn.style.display = 'inline-flex';
         const pre = document.createElement('pre');
         pre.textContent = text;
         previewModalBody.innerHTML = '';
@@ -549,6 +689,18 @@ document.addEventListener('DOMContentLoaded', () => {
   closePreviewBtn.addEventListener('click', () => {
     previewModal.style.display = 'none';
     previewModalBody.innerHTML = '';
+    activePreviewTextContent = '';
+    previewCopyContentBtn.style.display = 'none';
+  });
+
+  previewCopyContentBtn.addEventListener('click', () => {
+    if (activePreviewTextContent) {
+      navigator.clipboard.writeText(activePreviewTextContent).then(() => {
+        showToast('Text content copied to clipboard!', 'success');
+      }).catch(() => {
+        showToast('Failed to copy text', 'error');
+      });
+    }
   });
 
   previewCopyLinkBtn.addEventListener('click', () => {

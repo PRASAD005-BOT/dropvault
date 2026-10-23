@@ -52,8 +52,28 @@
 
     <!-- Main Content -->
     <main class="main-content">
+      <!-- Upload Mode Switcher -->
+      <div class="upload-mode-switcher">
+        <button type="button" class="mode-tab active" id="tabUploadMode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Upload Files
+        </button>
+        <button type="button" class="mode-tab" id="tabPasteMode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+          </svg>
+          Paste & Share Text
+        </button>
+      </div>
+
       <!-- Upload Section -->
       <section class="upload-section">
+        <!-- File Dropzone -->
         <div class="dropzone" id="dropzone">
           <input type="file" id="fileInput" multiple style="display: none;">
           
@@ -87,6 +107,42 @@
                 <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Paste & Share Text Card -->
+        <div class="paste-card" id="pasteCard" style="display: none;">
+          <div class="paste-card-header">
+            <div class="paste-filename-group">
+              <label for="pasteFilenameInput">Filename (optional):</label>
+              <input type="text" id="pasteFilenameInput" placeholder="e.g. notes.txt, script.py, config.json">
+            </div>
+            <div class="paste-quick-actions">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnClipboardPaste">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                </svg>
+                Paste from Clipboard
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnClearPaste">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <textarea id="pasteTextInput" class="paste-textarea" placeholder="Paste or type your text, code, notes, logs, or JSON here... (You can also press Ctrl + V anywhere)"></textarea>
+
+          <div class="paste-card-footer">
+            <div class="paste-stats" id="pasteStatsText">0 characters • 0 words</div>
+            <button type="button" class="btn btn-primary" id="btnSaveText">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+              </svg>
+              Save & Upload Text File
+            </button>
           </div>
         </div>
       </section>
@@ -189,10 +245,17 @@
       <div class="modal-footer">
         <div class="modal-file-info" id="previewModalInfo">Size: -- • Type: --</div>
         <div class="modal-actions">
-          <button class="btn btn-secondary" id="previewCopyLinkBtn">
+          <button class="btn btn-secondary" id="previewCopyContentBtn" style="display: none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Text
+          </button>
+          <button class="btn btn-secondary" id="previewCopyLinkBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
             Copy Link
           </button>
